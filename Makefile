@@ -1,5 +1,5 @@
 all: main.tex
-	latexmk --pdf main.tex
+	 pdflatex -shell-escape main
 
 clean: 
 	latexmk -C

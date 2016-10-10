@@ -2,7 +2,7 @@
 \usetheme{metropolis}           % Use metropolis theme
 \usepackage{epigraph}
 
-\usepackage{listings}
+\usepackage{minted}
 
 
 \title{Learn You a C++ for Great Good}
@@ -26,7 +26,8 @@ Department of Electrical and Computer Engineering}
 
 \begin{frame}[fragile]
 \frametitle{3D $y = Mx + b$ in C}
-\begin{lstlisting}[language=C]
+
+\begin{minted}{c}
 // Add Two 3D Vectors
 Vec3d add_vec3d_vec3d(Vec3d, Vec3d);
 
@@ -37,14 +38,14 @@ Vec3d mult_mat3x3_vec3d(Mat3x3, Vec3d);
 Vec3d y = add_vec3d_vec3d( 
     mult_mat3x3_vec3d(M, x), b     
     );
-\end{lstlisting}
+\end{minted}
 \end{frame}
 
 \begin{frame}[fragile]
 \frametitle{3D $y = Mx + b$ in C++}
-\begin{lstlisting}[language=C++]
+\begin{minted}{c++}
 Vec3d y = M*x + b;  //Obvious
-\end{lstlisting}
+\end{minted}
 \end{frame}
 
 \begin{frame}{Cool C++ Features}
@@ -58,6 +59,276 @@ Vec3d y = M*x + b;  //Obvious
             \end{itemize}
         \item Objects
         \item Template Metaprogramming
+        \item Runtime Exceptions
     \end{itemize}
+\end{frame}
+
+\section{Lets Dive in to C++}
+
+\begin{frame}[fragile]
+    \frametitle{Function Overloading}
+    In C, function names must be unique.
+    \begin{minted}{c}
+    int   add (int x, int y);
+    float add (float x, float y); //Compile time error
+    \end{minted}
+    Developers conventionally encode the input and output types in the name. For example:
+    \begin{minted}{c}
+    int   add_i (int x, int y);
+    float add_f (float x, float y);
+    \end{minted}
+    
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Function Overloading Cont.}
+
+    C++ added the concept of \textbf{Name Mangling} to the compiler.
+    Functions with the same "names" but different parameters get assigned unique identifiers at compile time!
+\end{frame}    
+\begin{frame}[fragile]
+    \frametitle{Function Overloading Cont.}
+    For example g++ will compile the following two functions
+
+    \begin{minted}{c++}
+    int   add (int x, int y);
+    float add (float x, float y); 
+    \end{minted}
+    And the output will look like this (note: using the \texttt{nm} command)
+    \begin{minted}{c++}
+    __Z3addff
+    __Z3addii
+    \end{minted}
+    Here the \_\_Z is a reserved label for the compiler (so we don't need to care about it). 
+    The 3 means the function "name" is the next 3 characters. Finally, the \texttt{ff} and \texttt{ii} indicate two float and two int input parameters respectively.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Objects}
+    C style structs are really just "Plain Old Data" (POD).
+    And any API using these structs operates on some reference to an object.
+
+    \begin{minted}{c}
+    typedef struct Michael {
+        int  age;
+        bool isAwesome;
+    } Michael;
+    Michael* constructMichael(){ 
+        Michael* m = (Michael*)malloc(sizeof(Michael)); 
+        m->age = 24; m->isAwesome = true; return m}
+    void destroyMichael(Michael* thisMichael)
+        { free(thisMichael); }
+    void isMichaelAwesome(Michael* thisMichael)
+        { printf("true"); //Assumed }
+    \end{minted}
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Basic Objects in C++}
+    C++ Allows you to embed all this crap directly "in" the object. The compiler will create functions with an implicit pointer to the current object (this).
+
+    \begin{minted}{c++}
+    class Michael{
+      private:
+        int  _age;
+        bool _isAwesome; //only Michael can modify this
+      public:
+        Michael(void) { _age = 24; _isAwesome = true; }
+        ~Michael(void) { /*Destructor not necessary*/ }
+        bool isAwesome(void){ return _isAwesome; }
+    };
+    \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Basic Objects in C++}
+    The previous C++ class is roughly equivalent to to following.
+    \begin{minted}{c}
+    struct Michael{
+        int  _age;
+        bool _isAwesome; 
+    };
+    Michael createMichael() 
+    { Michael m; m._age = 24; m._isAwesome = true; }
+    void destroyMichael(Michael& this) 
+    { /*Destructor not necessary*/ }
+    bool isAwesome(Michael& m){ return m._isAwesome; }
+    \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Basic Objects in C++}
+
+    However, since the \texttt{\_age} and \texttt{\_isAwesome} are private to Michael the following is invalid.
+
+    \begin{minted}{c++}
+    Michael m;
+    m._isAwesome = false;   // compile time error
+    cout << m._age << endl; // compile time error
+    \end{minted}
+
+    Only members of the Michael class have access to private fields, however everyone has access to the public space.
+    \begin{minted}{c++}
+    Michael m;
+    cout << m.isAwesome() << endl; //Valid and Assumed   
+    \end{minted}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Object Lifecycles}
+    Conceptually, the object lifecycle is pretty simple.
+    \begin{enumerate}
+        \item Programmer creates the object by calling some constructor
+        \item Programmer uses object
+        \item Object destructor called automatically when object is out of scope.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Object Lifecycles: Constructors}
+    Constructors literally construct types. 
+    For example, a constructor might initialize variables, set some sort of state, allocate space on the heap, or even copy objects.
+
+    Constructors are functions with the same name as the class. A few special case constructors:
+    \begin{itemize}
+    \item Default constructor has no input parameters
+    \item Copy constructors take some reference to an object of the same type
+    \item Move constructors (noteworthy, but not important for this class :) )
+    \end{itemize}
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Object Lifecycles: Constructors}
+    Imagine we have a Pokemon class:
+    \begin{minted}{c++}
+    Pokemon() //Default Constructor
+     { type = nullptr; moveSet.append(Tackle(pp=25)); 
+       health = 10; ...}
+    
+    Pokemon(string mType, int mHealth, ...)
+     { type = new PokeType(mType); ... }
+    
+    Pokemon(const Pokemon& that) // Copy Constructor
+     { copy(that); return this; }
+    \end{minted}
+\end{frame}
+
+\begin{frame}
+\frametitle{Object Lifecycles: Destructors}
+    Destructors literally destroy objects, and by default they do nothing.
+    Destructors are only necessary to help clean up after the object. 
+    For example, use destructors to:
+    \begin{itemize}
+    \item delete (free) any memory dynamically allocated by the class
+    \item notify engine of object destruction (Advanced and rarely used)
+    \end{itemize}
+
+    \textbf{Destructors are called when objects go out of scope (automatically added by compiler) or when they are deleted.}
+    Think about why this is awesome (hint: containers of objects).
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Object Lifecycles: Destructors}
+    So for our Pokemon example, we need a destructor to free up the Pokemon type data.
+
+    \begin{minted}{c++}
+    ~Pokemon(){ 
+        if(type) 
+            delete type;
+        ...
+    }
+    \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Object Lifecycles: Example 1}
+    \begin{minted}{c++}
+    #include <iostream>
+    #include <string>
+    using namespace std;
+    class Human{ //private by default
+      string name;
+      public:
+        Human(string name): name(name) 
+        { cout <<"Constructing: " << name << endl; }
+        ~Human(){ cout << "RIP: " << name << endl; }
+    };
+    int main(){
+        Human m = Human("Tiberius");
+        cout << "Hello" << endl;
+        return 0;
+    }
+    \end{minted}
+\end{frame}
+\begin{frame}[fragile]
+    \frametitle{Object Lifecycles: Example 1}
+    This Outputs
+    \begin{minted}{c++}
+    Constructing: Tiberius
+    Hello
+    RIP: Tiberius
+    \end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Object Lifecycles: Example 2}
+    \begin{minted}{c++}
+    void foo(){ Human m("Jim-Bob-Joe"); }
+
+    int main(){
+        Human m = Human("Tiberius");
+        foo();
+        cout << "Hello" << endl;
+        return 0;
+    }
+    \end{minted}
+\end{frame}
+\begin{frame}[fragile]
+    \frametitle{Object Lifecycles: Example 2}
+    This Outputs
+    \begin{minted}{c++}
+    Constructing: Tiberius
+    Constructing: Jim-Bob-Joe
+    RIP: Jim-Bob-Joe
+    Hello
+    RIP: Tiberius
+    \end{minted}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Object Lifecycles: Example 3}
+    \begin{minted}{c++}
+
+    int main(){
+        Human* m =  new Human("Tiberius");
+        delete m;
+        cout << "Hello" << endl;
+        return 0;
+    }
+    \end{minted}
+\end{frame}
+\begin{frame}[fragile]
+    \frametitle{Object Lifecycles: Example 3}
+    This Outputs
+    \begin{minted}{c++}
+    Constructing: Tiberius
+    RIP: Tiberius
+    Hello
+    \end{minted}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Scoping}
+    
 \end{frame}
 \end{document}
