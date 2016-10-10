@@ -260,7 +260,7 @@ Vec3d y = M*x + b;  //Obvious
         ~Human(){ cout << "RIP: " << name << endl; }
     };
     int main(){
-        Human m = Human("Tiberius");
+        Human m = Human("Ash Ketchum");
         cout << "Hello" << endl;
         return 0;
     }
@@ -270,9 +270,9 @@ Vec3d y = M*x + b;  //Obvious
     \frametitle{Object Lifecycles: Example 1}
     This Outputs
     \begin{minted}{c++}
-    Constructing: Tiberius
+    Constructing: Ash Ketchum
     Hello
-    RIP: Tiberius
+    RIP: Ash Ketchum
     \end{minted}
 
 \end{frame}
@@ -283,7 +283,7 @@ Vec3d y = M*x + b;  //Obvious
     void foo(){ Human m("Jim-Bob-Joe"); }
 
     int main(){
-        Human m = Human("Tiberius");
+        Human m = Human("Ash Ketchum");
         foo();
         cout << "Hello" << endl;
         return 0;
@@ -294,11 +294,11 @@ Vec3d y = M*x + b;  //Obvious
     \frametitle{Object Lifecycles: Example 2}
     This Outputs
     \begin{minted}{c++}
-    Constructing: Tiberius
+    Constructing: Ash Ketchum
     Constructing: Jim-Bob-Joe
     RIP: Jim-Bob-Joe
     Hello
-    RIP: Tiberius
+    RIP: Ash Ketchum
     \end{minted}
 
 \end{frame}
@@ -309,7 +309,7 @@ Vec3d y = M*x + b;  //Obvious
     \begin{minted}{c++}
 
     int main(){
-        Human* m =  new Human("Tiberius");
+        Human* m =  new Human("Ash Ketchum");
         delete m;
         cout << "Hello" << endl;
         return 0;
@@ -320,8 +320,8 @@ Vec3d y = M*x + b;  //Obvious
     \frametitle{Object Lifecycles: Example 3}
     This Outputs
     \begin{minted}{c++}
-    Constructing: Tiberius
-    RIP: Tiberius
+    Constructing: Ash Ketchum
+    RIP: Ash Ketchum
     Hello
     \end{minted}
 
