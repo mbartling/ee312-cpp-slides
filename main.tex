@@ -1,0 +1,63 @@
+\documentclass{beamer}
+\usetheme{metropolis}           % Use metropolis theme
+\usepackage{epigraph}
+
+\usepackage{listings}
+
+
+\title{Learn You a C++ for Great Good}
+\date{\today}
+\author{Michael Bartling}
+\institute{University of Texas at Austin\\
+Department of Electrical and Computer Engineering}
+\renewcommand{\epigraphflush}{center}
+\renewcommand{\sourceflush}{flushleft}
+
+\begin{document}
+\maketitle
+
+\section{C++ In a Nutshell}
+
+\begin{frame}{Basic difference between C and C++}
+    \begin{center}
+        \epigraph{C makes it easy to shoot yourself in the foot; C++ makes it harder, but when you do it blows your whole leg off}{Bjarne Stroustrup\\The Creator of C++}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{3D $y = Mx + b$ in C}
+\begin{lstlisting}[language=C]
+// Add Two 3D Vectors
+Vec3d add_vec3d_vec3d(Vec3d, Vec3d);
+
+//Multiply 3x3 Matrix with Vec3d
+Vec3d mult_mat3x3_vec3d(Mat3x3, Vec3d);
+
+// Y = Mx+b
+Vec3d y = add_vec3d_vec3d( 
+    mult_mat3x3_vec3d(M, x), b     
+    );
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{3D $y = Mx + b$ in C++}
+\begin{lstlisting}[language=C++]
+Vec3d y = M*x + b;  //Obvious
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Cool C++ Features}
+    \begin{itemize}
+        \item New/Delete instead of Malloc/Free
+        \item Function Overloading
+        \item More "control" over scope
+            \begin{itemize}
+                \item Namespaces
+                \item Membership Resolution
+            \end{itemize}
+        \item Objects
+        \item Template Metaprogramming
+    \end{itemize}
+\end{frame}
+\end{document}
