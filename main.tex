@@ -327,8 +327,56 @@ Vec3d y = M*x + b;  //Obvious
 
 \end{frame}
 
-\begin{frame}
-    \frametitle{Scoping}
-    
+\begin{frame}[fragile]
+    \frametitle{Object Operator Overloading }
+    You can also define operators the same way you define functions!
+    \begin{minted}{c++}
+    Vec2d operator + (Vec2d a, Vec2d b) 
+     { return Vec2d(a.x + b.x, a.y + b.y); }
+    Vec2d operator + (Vec2d a, double b)
+     { return Vec2d(a.x + b, a.y + b); }
+    Vec2d operator + (double b, Vec2d a)
+     { return Vec2d(a.x + b, a.y + b); }
+    \end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Namespaces and Scope Resolution}
+    \begin{itemize}
+    \item Namespaces == named scope/block of code
+        \begin{itemize}
+        \item Useful for big projects/libraries
+        \end{itemize}
+    \item Scope resolution operator, \texttt{Scope::Qualified\_Name}
+    \end{itemize}
+    \begin{minted}{c++}
+    namespace Vallath{ 
+      int magicMathFunction(...); //Probably has bugs 
+    }
+    namespace Michael{ 
+      int magicMathFunction(...); //Always Perfect 
+    }
+    ...
+    //Use the function in the Michael namespace
+    int byteMe = Michael::magicMathFunction(...);
+    \end{minted}
+\end{frame}
+\begin{frame}[fragile]
+    \frametitle{Namespaces and Scope Resolution}
+    Scope resolution super useful for embedded types
+    \begin{minted}{c++}
+    class Vector{
+        ...
+        class iterator{...};
+        iterator begin(void){...}
+        iterator end(void){...}
+    };
+    ...
+    for(Vector::iterator i = mVec.begin();
+        i != mVec.end(); i++){
+            ...
+    }
+    \end{minted}
 \end{frame}
 \end{document}
