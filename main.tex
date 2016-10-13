@@ -46,18 +46,21 @@ Vec3d y = add_vec3d_vec3d(
 \begin{minted}{c++}
 Vec3d y = M*x + b;  //Obvious
 \end{minted}
+
+\includegraphics[width=0.95\textwidth]{ilikewhatyougot}
+
 \end{frame}
 
 \begin{frame}{Cool C++ Features}
     \begin{itemize}
         \item New/Delete instead of Malloc/Free
         \item Function Overloading
+        \item Objects
         \item More "control" over scope
             \begin{itemize}
                 \item Namespaces
                 \item Membership Resolution
             \end{itemize}
-        \item Objects
         \item Template Metaprogramming
         \item Runtime Exceptions
     \end{itemize}
@@ -184,7 +187,7 @@ Vec3d y = M*x + b;  //Obvious
     \begin{enumerate}
         \item Programmer creates the object by calling some constructor
         \item Programmer uses object
-        \item Object destructor called automatically when object is out of scope.
+        \item Object destructor called automatically when object is out of scope or if manually deleted via \texttt{delete}.
     \end{enumerate}
 \end{frame}
 
@@ -213,7 +216,7 @@ Vec3d y = M*x + b;  //Obvious
     
     Pokemon(string mType, int mHealth, ...)
      { type = new PokeType(mType); ... }
-    
+    //Pass by const lvalue reference 
     Pokemon(const Pokemon& that) // Copy Constructor
      { copy(that); return this; }
     \end{minted}
@@ -373,10 +376,30 @@ Vec3d y = M*x + b;  //Obvious
         iterator end(void){...}
     };
     ...
+    // Iterate through the Vector elements
     for(Vector::iterator i = mVec.begin();
         i != mVec.end(); i++){
             ...
     }
     \end{minted}
+\end{frame}
+
+\begin{frame}
+\frametitle{Basic Takeaways}
+    \begin{itemize}
+            \item Proper use of constructors/destructors makes it easier to debug memory leaks
+            \item Objects encapsulate both logic and variables meaning code is smaller, is cleaner, and, generally, does more with less
+            \item Language basics help expose more bugs at compile time
+            \item C++ super scalable as compared to C
+            \item Despite being more generic and reusable, many of the C++ STL datastructures and algorithms outperform hand tuned C code!
+    \end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Basic Takeaways}
+    \includegraphics[width=0.95\textwidth]{shutup.jpg}
+\end{frame}
+\begin{frame}
+\frametitle{Templates: Make Magic by Exploiting Types}
+
 \end{frame}
 \end{document}
