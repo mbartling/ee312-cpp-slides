@@ -124,7 +124,7 @@ Vec3d y = M*x + b;  //Obvious
     void destroyMichael(Michael* thisMichael)
         { free(thisMichael); }
     void isMichaelAwesome(Michael* thisMichael)
-        { printf("true"); //Assumed }
+        { printf("true"); /*Assumed*/ }
     \end{minted}
 
 
@@ -156,10 +156,13 @@ Vec3d y = M*x + b;  //Obvious
         bool _isAwesome; 
     };
     Michael createMichael() 
-    { Michael m; m._age = 24; m._isAwesome = true; }
-    void destroyMichael(Michael& this) 
+    { Michael m; m._age = 24; m._isAwesome = true; 
+        return m; }
+
+    void destroyMichael(Michael* this) 
     { /*Destructor not necessary*/ }
-    bool isAwesome(Michael& m){ return m._isAwesome; }
+
+    bool isAwesome(Michael* m){ return m->_isAwesome; }
     \end{minted}
 \end{frame}
 
@@ -216,6 +219,7 @@ Vec3d y = M*x + b;  //Obvious
     
     Pokemon(string mType, int mHealth, ...)
      { type = new PokeType(mType); ... }
+
     //Pass by const lvalue reference 
     Pokemon(const Pokemon& that) // Copy Constructor
      { copy(that); return this; }
@@ -250,7 +254,7 @@ Vec3d y = M*x + b;  //Obvious
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Object Lifecycles: Example 1}
+    \frametitle{Object Lifecycles: The Human Class}
     \begin{minted}{c++}
     #include <iostream>
     #include <string>
@@ -262,9 +266,14 @@ Vec3d y = M*x + b;  //Obvious
         { cout <<"Constructing: " << name << endl; }
         ~Human(){ cout << "RIP: " << name << endl; }
     };
+    \end{minted}
+\end{frame}
+\begin{frame}[fragile]
+    \frametitle{Object Lifecycles: Example 1}
+    \begin{minted}{c++}
     int main(){
         Human m = Human("Ash Ketchum");
-        cout << "Hello" << endl;
+        cout << "Gotta Catchem All" << endl;
         return 0;
     }
     \end{minted}
@@ -274,7 +283,7 @@ Vec3d y = M*x + b;  //Obvious
     This Outputs
     \begin{minted}{c++}
     Constructing: Ash Ketchum
-    Hello
+    Gotta Catchem All
     RIP: Ash Ketchum
     \end{minted}
 
@@ -288,7 +297,7 @@ Vec3d y = M*x + b;  //Obvious
     int main(){
         Human m = Human("Ash Ketchum");
         foo();
-        cout << "Hello" << endl;
+        cout << "Gotta Catchem All" << endl;
         return 0;
     }
     \end{minted}
@@ -300,7 +309,7 @@ Vec3d y = M*x + b;  //Obvious
     Constructing: Ash Ketchum
     Constructing: Jim-Bob-Joe
     RIP: Jim-Bob-Joe
-    Hello
+    Gotta Catchem All
     RIP: Ash Ketchum
     \end{minted}
 
@@ -314,7 +323,7 @@ Vec3d y = M*x + b;  //Obvious
     int main(){
         Human* m =  new Human("Ash Ketchum");
         delete m;
-        cout << "Hello" << endl;
+        cout << "Cant Catchem All" << endl;
         return 0;
     }
     \end{minted}
@@ -325,7 +334,7 @@ Vec3d y = M*x + b;  //Obvious
     \begin{minted}{c++}
     Constructing: Ash Ketchum
     RIP: Ash Ketchum
-    Hello
+    Cant Catchem All
     \end{minted}
 
 \end{frame}
@@ -336,8 +345,10 @@ Vec3d y = M*x + b;  //Obvious
     \begin{minted}{c++}
     Vec2d operator + (Vec2d a, Vec2d b) 
      { return Vec2d(a.x + b.x, a.y + b.y); }
+
     Vec2d operator + (Vec2d a, double b)
      { return Vec2d(a.x + b, a.y + b); }
+
     Vec2d operator + (double b, Vec2d a)
      { return Vec2d(a.x + b, a.y + b); }
     \end{minted}
